@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "firejpug"
+    "default": "firejpug",
+    "dev": "firejpug-dev"
   }
 }
