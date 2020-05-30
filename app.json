@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "FJUG app",
-    "slug": "fjug-app",
+    "name": "FJUG",
+    "slug": "fjug",
     "android": {
       "package": "asia.firebase",
       "versionCode": 1,
