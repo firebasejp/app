@@ -1,13 +1,12 @@
-// @generated: @expo/next-adapter@2.1.9
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-export default function App() {
+export default function App(): JSX.Element {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome to Expo + Next.js 👋</Text>
+      <Text style={styles.text}>FJUG</Text>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -19,4 +18,4 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
   },
-})
+});

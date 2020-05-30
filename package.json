@@ -1,5 +1,5 @@
 {
-  "name": "with-expo-typescript",
+  "name": "firebase-japan-user-group",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
@@ -11,7 +11,8 @@
     "web": "next",
     "eject-next": "next-expo customize",
     "eject": "expo eject",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "lint": "eslint --ext ts,tsx ."
   },
   "dependencies": {
     "expo": "~37.0.3",
@@ -28,7 +29,20 @@
     "@types/react": "16.9.35",
     "@types/react-dom": "16.9.8",
     "@types/react-native": "0.62.10",
+    "@typescript-eslint/eslint-plugin": "^3.0.2",
+    "@typescript-eslint/parser": "^3.0.2",
     "babel-preset-expo": "~8.1.0",
+    "eslint": "^7.1.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jest": "^23.13.2",
+    "eslint-plugin-prefer-arrow": "^1.2.1",
+    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-react": "^7.20.0",
+    "eslint-plugin-react-hooks": "^4.0.4",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.7",
+    "prettier": "^2.0.5",
     "typescript": "3.9.3"
   }
 }
