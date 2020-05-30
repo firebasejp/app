@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "672500308592",
+    "firebase_url": "https://firejpug.firebaseio.com",
+    "project_id": "firejpug",
+    "storage_bucket": "firejpug.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672500308592:android:14931799e1a35b36b7f2b5",
+        "android_client_info": {
+          "package_name": "asia.firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "672500308592-hgcq0snol1hhmpcjhfcu6i1crt5a33e3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6xZNFZ8P1WaicHcsRPAR8c34bHNPuzVA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "672500308592-hgcq0snol1hhmpcjhfcu6i1crt5a33e3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "672500308592-bnd90r90nt3q7p7hvbm9j979r99pjp3s.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "asia.firebase"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

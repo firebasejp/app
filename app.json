@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "FJUG app",
+    "slug": "fjug-app",
+    "android": {
+      "package": "asia.firebase",
+      "versionCode": 1,
+      "googleServicesFile": "./config/prod/google-services.json"
+    },
+    "ios": {
+      "bundleIdentifier": "asia.firebase",
+      "buildNumber": "1.0.0",
+      "googleServicesFile": "./config/prod/GoogleService-Info.plist"
+    },
+    "web": {
+      "config": {
+        "firebase": {
+          "apiKey": "AIzaSyDDkdnaYz1BPVKtncoS1qdbXsby7uy6L2I",
+          "authDomain": "firejpug.firebaseapp.com",
+          "databaseURL": "https://firejpug.firebaseio.com",
+          "projectId": "firejpug",
+          "storageBucket": "firejpug.appspot.com",
+          "messagingSenderId": "672500308592",
+          "appId": "1:672500308592:web:9c125499661a632a",
+          "measurementId": "G-QGWN9Y50ET"
+        }
+      }
+    }
+  }
+}
