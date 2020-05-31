@@ -23,6 +23,7 @@
     "@react-navigation/native": "^5.5.0",
     "@react-navigation/stack": "^5.4.1",
     "expo": "~37.0.3",
+    "expo-firebase-analytics": "~2.1.1",
     "next": "latest",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",

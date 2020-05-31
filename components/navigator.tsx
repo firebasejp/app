@@ -15,6 +15,7 @@ import {
   Feather,
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
+import * as Analytics from 'expo-firebase-analytics';
 import { NewsNavigator } from './news';
 import { Notifications } from './notifications';
 import { MyPage } from './profile';
@@ -108,9 +109,8 @@ export function RootNabigator(): JSX.Element {
           return;
         }
         const { name: currentRouteName } = getActiveRoute(state) ?? {};
-        console.log({ currentRouteName });
 
-        // Analytics.setCurrentScreen(currentRouteName);
+        Analytics.setCurrentScreen(currentRouteName);
       }}
       theme={navigationTheme}
       linking={linking}
