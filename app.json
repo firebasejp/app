@@ -2,6 +2,15 @@
   "expo": {
     "name": "FJUG",
     "slug": "fjug",
+    "version": "1.0.0",
+    "privacy": "unlisted",
+    "userInterfaceStyle": "automatic",
+    "primaryColor": "#ffab40",
+    "icon": "./assets/images/icon.png",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "backgroundColor": "#ffab40"
+    },
     "android": {
       "package": "asia.firebase",
       "versionCode": 1,
