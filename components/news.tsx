@@ -1,7 +1,7 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, StatusBar } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { Appbar, Title } from 'react-native-paper';
+import { Appbar, Title, useTheme } from 'react-native-paper';
 
 const Dummy = ({ text }: { text: string }) => () => (
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -11,62 +11,68 @@ const Dummy = ({ text }: { text: string }) => () => (
 
 const Tab = createMaterialTopTabNavigator();
 
-export const NewsNavigator = (): JSX.Element => (
-  <>
-    <Appbar.Header>
-      {/* <Appbar.Action icon="magnify" onPress={() => ({})} /> */}
-      <Appbar.Content title="Firebase Japan User Group" />
-    </Appbar.Header>
-    <Tab.Navigator
-      initialRouteName="/news/events"
-      tabBarOptions={{
-        tabStyle: { width: 100 },
-        scrollEnabled: true,
-        showIcon: true,
-      }}
-    >
-      <Tab.Screen
-        name="/news/favorite"
-        component={Dummy({ text: 'Favorite' })}
-        options={{
-          tabBarLabel: 'Favorite',
-        }}
+export function NewsNavigator(): JSX.Element {
+  const theme = useTheme();
+
+  return (
+    <>
+      <StatusBar
+        backgroundColor={theme.colors.background}
+        barStyle={!theme.dark ? 'dark-content' : 'light-content'}
       />
-      <Tab.Screen
-        name="/news/events"
-        component={Dummy({ text: 'Events' })}
-        options={{
-          tabBarLabel: 'Events',
+      <Appbar.Header
+        style={{
+          backgroundColor: theme.dark ? theme.colors.background : '#FFFFFF',
+          elevation: 0,
         }}
-      />
-      <Tab.Screen
-        name="/news/videos"
-        component={Dummy({ text: 'Videos' })}
-        options={{
-          tabBarLabel: 'Videos',
+      >
+        {/* <Appbar.Action icon="magnify" onPress={() => ({})} /> */}
+        <Appbar.Content title="Firebase Japan User Group" />
+      </Appbar.Header>
+      <Tab.Navigator
+        initialRouteName="/news/events"
+        tabBarOptions={{
+          tabStyle: { width: 100 },
+          scrollEnabled: true,
+          showIcon: true,
         }}
-      />
-      <Tab.Screen
-        name="/news/items1"
-        component={Dummy({ text: 'Items 1' })}
-        options={{
-          tabBarLabel: 'Items 1',
-        }}
-      />
-      <Tab.Screen
-        name="/news/items2"
-        component={Dummy({ text: 'Items 2' })}
-        options={{
-          tabBarLabel: 'Items 2',
-        }}
-      />
-      <Tab.Screen
-        name="/news/items3"
-        component={Dummy({ text: 'Items 3' })}
-        options={{
-          tabBarLabel: 'Items 3',
-        }}
-      />
-    </Tab.Navigator>
-  </>
-);
+      >
+        <Tab.Screen
+          name="/news/favorite"
+          component={Dummy({ text: 'Favorite' })}
+          options={{
+            tabBarLabel: 'Favorite',
+          }}
+        />
+        <Tab.Screen
+          name="/news/events"
+          component={Dummy({ text: 'Events' })}
+          options={{
+            tabBarLabel: 'Events',
+          }}
+        />
+        <Tab.Screen
+          name="/news/videos"
+          component={Dummy({ text: 'Videos' })}
+          options={{
+            tabBarLabel: 'Videos',
+          }}
+        />
+        <Tab.Screen
+          name="/news/blog"
+          component={Dummy({ text: 'Blog' })}
+          options={{
+            tabBarLabel: 'Blog',
+          }}
+        />
+        <Tab.Screen
+          name="/news/who-use"
+          component={Dummy({ text: 'Who use' })}
+          options={{
+            tabBarLabel: 'Who use',
+          }}
+        />
+      </Tab.Navigator>
+    </>
+  );
+}

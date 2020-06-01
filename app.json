@@ -11,6 +11,10 @@
       "image": "./assets/images/splash.png",
       "backgroundColor": "#ffab40"
     },
+    "androidStatusBar": {
+      "backgroundColor": "#c56000",
+      "translucent": false
+    },
     "android": {
       "package": "asia.firebase",
       "versionCode": 1,

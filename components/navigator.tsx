@@ -48,10 +48,20 @@ const getActiveRoute = (
 export function RootNabigator(): JSX.Element {
   const theme = useTheme();
   const navigationTheme = theme.dark
-    ? { ...DarkTheme, colors: { ...DarkTheme.colors, primary: '#ffab40' } }
+    ? {
+        ...DarkTheme,
+        colors: {
+          ...DarkTheme.colors,
+          primary: '#ffab40',
+        },
+      }
     : {
         ...DefaultTheme,
-        colors: { ...DefaultTheme.colors, primary: '#ffab40' },
+        colors: {
+          ...DefaultTheme.colors,
+          primary: '#ffab40',
+          background: '#ffffff',
+        },
       };
 
   const linking: LinkingOptions = {
