@@ -15,11 +15,11 @@
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@firestore-simple/admin": "7.0.0",
     "@types/jsdom": "16.2.3",
     "axios": "0.19.2",
     "firebase-admin": "8.12.1",
     "firebase-functions": "3.6.2",
-    "firestore-simple": "6.0.1",
     "jsdom": "16.2.2"
   },
   "devDependencies": {

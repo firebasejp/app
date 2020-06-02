@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import { ConnpassClient } from '../client/connpass'
-import { FirestoreSimple } from 'firestore-simple'
+import { FirestoreSimple } from '@firestore-simple/admin'
 import { ConnpassEvent, Event } from '../model/event'
 
 const firestore = admin.firestore()
