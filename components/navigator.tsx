@@ -15,7 +15,7 @@ import {
   Feather,
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
-import * as Analytics from 'expo-firebase-analytics';
+import * as Analytics from '../lib/analytics';
 import { NewsNavigator } from './news';
 import { Notifications } from './notifications';
 import { MyPage } from './profile';

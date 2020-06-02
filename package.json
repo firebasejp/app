@@ -25,6 +25,7 @@
     "expo": "~37.0.3",
     "expo-firebase-analytics": "~2.1.1",
     "expo-splash-screen": "^0.2.3",
+    "expo-web-browser": "~8.2.1",
     "next": "latest",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",

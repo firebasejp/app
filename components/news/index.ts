@@ -1,0 +1,1 @@
+export { NewsNavigator } from './navigator';
