@@ -2,10 +2,12 @@
   "name": "functions",
   "scripts": {
     "build": "tsc",
+    "build:watch": "tsc -w",
+    "build:clean": "rimraf lib && npm run build",
     "serve": "npm run build && firebase serve --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
+    "deploy": "npm run build:clean && firebase deploy --only functions",
     "logs": "firebase functions:log"
   },
   "engines": {
@@ -23,6 +25,7 @@
   "devDependencies": {
     "firebase-functions-test": "0.1.6",
     "firebase-tools": "7.1.1",
+    "rimraf": "3.0.2",
     "typescript": "3.5.3"
   },
   "private": true
