@@ -82,7 +82,7 @@ export function EventCard({
       </Card.Content>
       <Card.Actions style={{ justifyContent: 'flex-start' }}>
         <IconButton
-          icon="heart-outline"
+          icon="bookmark-outline"
           onPress={() => {
             const i: Analytics.Item = {
               item_id: item.id,
@@ -93,11 +93,11 @@ export function EventCard({
             // TODO(k2wanko): Implment save stock
             const stocked = false;
             if (!stocked) {
-              Analytics.logAddToStock({
+              Analytics.logEvent('add_to_stock', {
                 items: [i],
               });
             } else {
-              Analytics.logRemoveFromStock({
+              Analytics.logEvent('remove_from_stock', {
                 items: [i],
               });
             }
@@ -110,7 +110,7 @@ export function EventCard({
               url: item.url,
             }).then((resulut) => {
               if (resulut.action === 'sharedAction') {
-                return Analytics.logShare({
+                return Analytics.logEvent('share', {
                   content_type: 'event',
                   item_id: item.id,
                   method: resulut.activityType ?? 'unknown',

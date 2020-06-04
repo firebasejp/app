@@ -1,6 +1,5 @@
 import React from 'react';
 import { FlatList, View } from 'react-native';
-import * as Analytics from '../../lib/analytics';
 import { EventCard } from './cards';
 
 export type EventViewItem = {
@@ -42,10 +41,6 @@ export function NewsEvents(): JSX.Element {
   if (!DATA || DATA.length === 0) {
     return <View />;
   }
-
-  Analytics.logViewItemList({
-    item_list_id: '/news/events?order=created:desc',
-  });
 
   return (
     <FlatList
