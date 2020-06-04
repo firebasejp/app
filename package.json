@@ -12,7 +12,8 @@
     "eject-next": "next-expo customize",
     "eject": "expo eject",
     "type-check": "tsc",
-    "lint": "eslint --ext ts,tsx ."
+    "lint": "eslint --ext ts,tsx .",
+    "lint:fix": "eslint --fix --ext ts,tsx ."
   },
   "dependencies": {
     "@expo/vector-icons": "^10.2.0",

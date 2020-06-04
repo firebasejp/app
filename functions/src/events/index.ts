@@ -1,2 +1,2 @@
-export * from './cron'
-export * from './firestore'
+export * from './cron';
+export * from './firestore';
