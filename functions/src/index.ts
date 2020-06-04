@@ -3,5 +3,4 @@ import * as admin from 'firebase-admin'
 
 admin.initializeApp(functions.config().firebase)
 
-export * from './cron/events'
-export * from './trigger/firestore'
+export * as events_v1 from './events'
