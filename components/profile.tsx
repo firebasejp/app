@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, StatusBar } from 'react-native';
 import { Appbar, Title } from 'react-native-paper';
 import { useTheme, useNavigation } from '@react-navigation/native';
 
@@ -9,6 +9,10 @@ export function MyPage(): JSX.Element {
 
   return (
     <>
+      <StatusBar
+        backgroundColor={theme.colors.background}
+        barStyle={!theme.dark ? 'dark-content' : 'light-content'}
+      />
       <Appbar.Header
         style={{
           backgroundColor: theme.colors.background,

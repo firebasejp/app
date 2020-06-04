@@ -15,6 +15,7 @@ import {
   Feather,
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
+import * as Analytics from '../lib/analytics';
 import { NewsNavigator } from './news';
 import { Notifications } from './notifications';
 import { MyPage } from './profile';
@@ -47,10 +48,20 @@ const getActiveRoute = (
 export function RootNabigator(): JSX.Element {
   const theme = useTheme();
   const navigationTheme = theme.dark
-    ? { ...DarkTheme, colors: { ...DarkTheme.colors, primary: '#ffab40' } }
+    ? {
+        ...DarkTheme,
+        colors: {
+          ...DarkTheme.colors,
+          primary: '#ffab40',
+        },
+      }
     : {
         ...DefaultTheme,
-        colors: { ...DefaultTheme.colors, primary: '#ffab40' },
+        colors: {
+          ...DefaultTheme.colors,
+          primary: '#ffab40',
+          background: '#ffffff',
+        },
       };
 
   const linking: LinkingOptions = {
@@ -108,9 +119,8 @@ export function RootNabigator(): JSX.Element {
           return;
         }
         const { name: currentRouteName } = getActiveRoute(state) ?? {};
-        console.log({ currentRouteName });
 
-        // Analytics.setCurrentScreen(currentRouteName);
+        Analytics.setCurrentScreen(currentRouteName);
       }}
       theme={navigationTheme}
       linking={linking}

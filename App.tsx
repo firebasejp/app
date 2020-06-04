@@ -1,5 +1,5 @@
 import React from 'react';
-import { I18nManager, StatusBar } from 'react-native';
+import { I18nManager } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppearanceProvider, useColorScheme } from 'react-native-appearance';
 import {
@@ -8,7 +8,7 @@ import {
   DarkTheme as PaperDarkTheme,
 } from 'react-native-paper';
 import { Updates } from 'expo';
-
+import * as SplashScreen from 'expo-splash-screen';
 import {
   PreferencesContext,
   PreferencesContextType,
@@ -17,6 +17,7 @@ import {
 import { RootNabigator } from './components/navigator';
 
 export default function App(): JSX.Element {
+  // const [isAppReady, setIsAppReady] = React.useState(false);
   const colorScheme = useColorScheme();
   const [theme, setTheme] = React.useState<'light' | 'dark'>(
     colorScheme === 'dark' ? 'dark' : 'light',
@@ -42,11 +43,15 @@ export default function App(): JSX.Element {
     [rtl, theme, toggleRTL],
   );
 
+  React.useEffect(() => {
+    // TODO(k2wanko): Implement loading
+    SplashScreen.preventAutoHideAsync().then(() => {
+      SplashScreen.hideAsync();
+    });
+  });
+
   return (
     <>
-      <StatusBar
-        barStyle={theme === 'light' ? 'dark-content' : 'light-content'}
-      />
       <SafeAreaProvider>
         <AppearanceProvider>
           <PreferencesContext.Provider value={preferences}>
