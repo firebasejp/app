@@ -4,6 +4,12 @@ import axios from 'axios';
 import crypto from 'crypto';
 import { PubSub } from '@google-cloud/pubsub';
 import { parseContent, ParserType } from './parsers';
+import { logger } from '../../logger';
+
+export const FEEDS_COLLECTION = 'feeds_v1';
+export const FEED_ITENS_DOC = 'feedItems_v1';
+export const FETCH_FEED_TOPIC = 'fetch-feed';
+
 function hash(data: string): string {
   const shasum = crypto.createHash('sha1');
   shasum.update(data);
@@ -40,7 +46,7 @@ export type FeedItem = {
  * ```
  */
 export const fetchFeed = functions.pubsub
-  .topic('fetch-feed')
+  .topic(FETCH_FEED_TOPIC)
   .onPublish(async (message) => {
     const { json: req } = message;
     if (!isFeed(req)) {
@@ -56,16 +62,18 @@ export const fetchFeed = functions.pubsub
 
     const db = admin.firestore();
     const urlHash = hash(url);
-    const docRef = db.doc(`/feeds_v1/${urlHash}`).withConverter<Feed>({
-      toFirestore: (model) => model,
-      fromFirestore: (data) => {
-        return {
-          url: data['url'],
-          lastModified: data['lastModified'],
-          expires: data['expires'],
-        };
-      },
-    });
+    const docRef = db
+      .doc(`/${FEEDS_COLLECTION}/${urlHash}`)
+      .withConverter<Feed>({
+        toFirestore: (model) => model,
+        fromFirestore: (data) => {
+          return {
+            url: data['url'],
+            lastModified: data['lastModified'],
+            expires: data['expires'],
+          };
+        },
+      });
     const doc = await docRef.get();
     const headers: {
       'if-modified-since': string | null;
@@ -82,8 +90,9 @@ export const fetchFeed = functions.pubsub
       .catch((err) => {
         if (err.response) {
           if (err.response.status === 304) {
-            console.log('304', {
-              url,
+            logger.info({
+              message: 'Not Modified',
+              status: 304,
               lastModified: headers['if-modified-since'],
             });
 
@@ -96,13 +105,16 @@ export const fetchFeed = functions.pubsub
       return;
     }
 
-    console.log(`status = ${res.status}`);
+    logger.info({
+      status: res.status,
+      contentSize: res.headers['content-length'],
+    });
 
     const feedItems = await parseContent(parser, res.data);
 
     const batch = db.batch();
 
-    const feedItemsRef = docRef.collection('feedItems_v1');
+    const feedItemsRef = docRef.collection(FEED_ITENS_DOC);
     for (const item of feedItems) {
       const { link } = item;
       if (!link) {
@@ -116,14 +128,15 @@ export const fetchFeed = functions.pubsub
     const expires = res.headers['expires'];
     batch.set(docRef, {
       url,
+      parser,
       expires: expires ? new Date(expires) : null,
       lastModified,
     });
 
     await batch.commit();
 
-    console.log(`Save feed`, {
-      url,
+    logger.info({
+      message: 'Save feeds',
       count: feedItems.length,
     });
 
@@ -135,7 +148,7 @@ export const runFetchFeeds = functions.pubsub
   .onRun(async () => {
     const db = admin.firestore();
     const res = await db
-      .collection('feed_v1')
+      .collection(FEEDS_COLLECTION)
       .withConverter<Feed>({
         toFirestore: (model) => model,
         fromFirestore: (data) => {
@@ -143,20 +156,35 @@ export const runFetchFeeds = functions.pubsub
             url: data['url'],
             lastModified: data['lastModified'],
             expires: data['expires'],
+            parser: data['parser'],
           };
         },
       })
       .where('expires', '<=', new Date())
       .get();
 
+    logger.info({
+      message: 'Get feeds',
+      size: res.size,
+    });
+
     const pubsub = new PubSub();
     const tasks: Promise<string>[] = [];
 
     for (const feed of res.docs) {
+      logger.debug({
+        data: feed.data(),
+      });
+      const { url, parser } = feed.data();
+      const payload = { url, parser };
+      logger.info({
+        message: 'Add fetch-feed task',
+        payload,
+      });
       tasks.push(
         pubsub
-          .topic('fetch-feed')
-          .publish(Buffer.from(JSON.stringify({ url: feed.data().url }))),
+          .topic(FETCH_FEED_TOPIC)
+          .publish(Buffer.from(JSON.stringify(payload))),
       );
     }
 
