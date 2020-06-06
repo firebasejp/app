@@ -3,11 +3,11 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w",
-    "build:clean": "rimraf lib && npm run build",
-    "serve": "npm run build && firebase serve --only functions",
-    "shell": "npm run build && firebase functions:shell",
-    "start": "npm run shell",
-    "deploy": "npm run build:clean && firebase deploy --only functions",
+    "build:clean": "rimraf lib && yarn build",
+    "serve": "yarn build && firebase serve --only functions",
+    "shell": "yarn build && firebase functions:shell",
+    "start": "yarn shell",
+    "deploy": "yarn build:clean && firebase deploy --only functions",
     "logs": "firebase functions:log"
   },
   "engines": {
@@ -16,13 +16,16 @@
   "main": "lib/index.js",
   "dependencies": {
     "@firestore-simple/admin": "7.0.0",
+    "@google-cloud/pubsub": "^2.1.0",
     "@types/jsdom": "16.2.3",
     "axios": "0.19.2",
     "firebase-admin": "8.12.1",
     "firebase-functions": "3.6.2",
-    "jsdom": "16.2.2"
+    "jsdom": "16.2.2",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
+    "@types/xml2js": "^0.4.5",
     "firebase-functions-test": "0.2.1",
     "firebase-tools": "8.4.1",
     "rimraf": "3.0.2",
