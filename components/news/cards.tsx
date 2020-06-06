@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import { View, Share } from 'react-native';
 import {
   useTheme,
@@ -159,6 +159,7 @@ export const BlogCard = ({
       marginBottom: 15,
       marginTop: index === 0 ? 15 : 0,
     }}
+    onPress={() => WebBrowser.openBrowserAsync(item.link)}
   >
     <Header title="" />
     <Card.Cover
@@ -166,6 +167,7 @@ export const BlogCard = ({
         uri: item.thumbnail ? item.thumbnail : 'https://picsum.photos/700',
       }}
     />
+
     <Card.Content>
       <View style={{ marginTop: 10, flexDirection: 'column' }}>
         <Paragraph style={{ fontWeight: 'bold' }}>{item.title}</Paragraph>

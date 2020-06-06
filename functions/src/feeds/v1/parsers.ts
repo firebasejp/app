@@ -12,14 +12,25 @@ const parseFeedburner = async (content: string): Promise<FeedItem[]> => {
   const res: FeedItem[] = [];
 
   for (const item of feed.entry) {
-    const link = item.link[0].$.href;
+    const link = item.link.find(
+      (l: { $: { rel: string } }) => l.$.rel === 'alternate',
+    ).$.href;
     const content = item.content[0]._;
     const dom = new JSDOM(content);
     const element = dom.window.document.querySelector(
       `meta[name='twitter:image']`,
     ) as HTMLMetaElement;
 
-    const thumbnail = element?.content ?? '';
+    let thumbnail = element?.content ?? '';
+
+    if (!thumbnail) {
+      const elements = dom.window.document.querySelectorAll(`img`);
+      thumbnail =
+        Array.from(elements)
+          .find((e) => e.dataset.originalWidth !== e.dataset.originalHeight)
+          ?.getAttribute('src') ?? '';
+    }
+
     res.push({
       contentType: 'blog',
       link,

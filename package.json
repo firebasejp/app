@@ -5,13 +5,17 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "expo start",
+    "start": "run-p start:*",
+    "start:expo": "expo start",
+    "start:emulators": "firebase emulators:start --import=./testdata --only ui,firestore,pubsub,functions",
+    "start:functions-tsc": "yarn --prefix functions tsc -w",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "next",
     "eject-next": "next-expo customize",
     "eject": "expo eject",
     "type-check": "tsc",
+    "emulators:export": "firebase emulators:export ./testdata",
     "lint": "eslint --ext ts,tsx .",
     "lint:fix": "eslint --fix --ext ts,tsx ."
   },
@@ -65,6 +69,7 @@
     "firebase-tools": "^8.4.1",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.7",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.0.5",
     "typescript": "3.9.3"
   }
