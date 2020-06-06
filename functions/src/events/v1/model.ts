@@ -1,4 +1,4 @@
-import { ConnpassResponseEvent } from '../client/connpass';
+import { ConnpassResponseEvent } from '../../client/connpass';
 // @google-cloud/firestoreはfirebase-adminの依存としてインストールされている
 import { GeoPoint } from '@google-cloud/firestore';
 
@@ -8,7 +8,7 @@ export interface Event {
   title: string; // イベント名
   description: string; // 概要
   eventUrl: string; // イベントurl
-  hashtag?: string; // ハッシュタグ
+  hashtag: string; // ハッシュタグ
   startedAt: Date; // 開始時間
   endedAt: Date; // 終了時間
   address: string; // 開催場所住所
@@ -27,7 +27,7 @@ export class ConnpassEvent implements Event {
   title: string;
   description: string;
   eventUrl: string;
-  hashtag?: string;
+  hashtag: string;
   startedAt: Date;
   endedAt: Date;
   address: string;
@@ -46,7 +46,7 @@ export class ConnpassEvent implements Event {
     this.title = res.title;
     this.description = res.description;
     this.eventUrl = res.event_url;
-    this.hashtag = res.hash_tag || undefined;
+    this.hashtag = res.hash_tag;
     this.startedAt = new Date(res.started_at);
     this.endedAt = new Date(res.ended_at);
     this.address = res.address;
