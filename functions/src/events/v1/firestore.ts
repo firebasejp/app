@@ -24,7 +24,7 @@ const getConnpassThumbnail = async (url: string): Promise<ArrayBuffer> => {
 // 追加されたeventsに対応するサムネイルをスクレイピングしてGCSにアップする
 export const saveEventThumbnail = functions
   .region('asia-northeast1')
-  .firestore.document('events/{eventId}')
+  .firestore.document('events_v1/{eventId}')
   .onCreate(async (snapshot) => {
     const data = snapshot.data();
     if (!data) return;
@@ -40,5 +40,5 @@ export const saveEventThumbnail = functions
     // ファイル名はconnpass_140369.pngのようになる
     const eventId = snapshot.id;
     const bucket = admin.storage().bucket();
-    await bucket.file(`events/thumbnail/${eventId}.png`).save(image);
+    await bucket.file(`events/v1/thumbnail/${eventId}.png`).save(image);
   });

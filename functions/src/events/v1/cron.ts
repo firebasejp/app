@@ -1,8 +1,8 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { ConnpassClient } from '../client/connpass';
+import { ConnpassClient } from '../../client/connpass';
 import { FirestoreSimple } from '@firestore-simple/admin';
-import { ConnpassEvent, Event } from '../model/event';
+import { ConnpassEvent, Event } from './model';
 
 const firestore = admin.firestore();
 const firestoreSimple = new FirestoreSimple(firestore);
@@ -13,7 +13,7 @@ export const getConnpassEvents = functions
   .timeZone('Asia/Tokyo')
   .onRun(async () => {
     const eventsCollection = firestoreSimple.collection<Event>({
-      path: 'events',
+      path: 'events_v1',
     });
 
     const client = new ConnpassClient('tokyo');

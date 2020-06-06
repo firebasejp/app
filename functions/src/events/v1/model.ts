@@ -1,4 +1,4 @@
-import { ConnpassResponseEvent } from '../client/connpass';
+import { ConnpassResponseEvent } from '../../client/connpass';
 // @google-cloud/firestoreはfirebase-adminの依存としてインストールされている
 import { GeoPoint } from '@google-cloud/firestore';
 
