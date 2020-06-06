@@ -36,7 +36,7 @@ export type FeedItem = {
 /**
  *
  * ```shell
- * feed_v1.fetchFeed({data: Buffer.from(`{"url": "http://feeds.feedburner.com/FirebaseBlog", "parser", "feedburner"}`)})
+ * feeds_v1.fetchFeed({data: Buffer.from(`{"url": "http://feeds.feedburner.com/FirebaseBlog", "parser": "feedburner"}`)})
  * ```
  */
 export const fetchFeed = functions.pubsub
@@ -56,7 +56,7 @@ export const fetchFeed = functions.pubsub
 
     const db = admin.firestore();
     const urlHash = hash(url);
-    const docRef = db.doc(`/feed_v1/${urlHash}`).withConverter<Feed>({
+    const docRef = db.doc(`/feeds_v1/${urlHash}`).withConverter<Feed>({
       toFirestore: (model) => model,
       fromFirestore: (data) => {
         return {
