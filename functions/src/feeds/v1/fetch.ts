@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import { PubSub } from '@google-cloud/pubsub';
 import { parseContent, ParserType } from './parsers';
 import { logger } from '../../logger';
+import { FirestoreDataConverter, DocumentData } from '@google-cloud/firestore';
 
 export const FEEDS_COLLECTION = 'feeds_v1';
 export const FEED_ITENS_DOC = 'feedItems_v1';
@@ -22,6 +23,18 @@ export type Feed = {
   parser?: ParserType;
   lastModified?: string;
   expires?: Date | null;
+};
+
+export const FeedConverter: FirestoreDataConverter<Feed> = {
+  toFirestore: (model: Feed) => model,
+  fromFirestore: (data: DocumentData) => {
+    return {
+      url: data['url'],
+      lastModified: data['lastModified'],
+      expires: data['expires'],
+      parser: data['parser'],
+    };
+  },
 };
 
 export const isFeed = (data: Record<string, unknown>): data is Feed => {
@@ -64,16 +77,7 @@ export const fetchFeed = functions.pubsub
     const urlHash = hash(url);
     const docRef = db
       .doc(`/${FEEDS_COLLECTION}/${urlHash}`)
-      .withConverter<Feed>({
-        toFirestore: (model) => model,
-        fromFirestore: (data) => {
-          return {
-            url: data['url'],
-            lastModified: data['lastModified'],
-            expires: data['expires'],
-          };
-        },
-      });
+      .withConverter<Feed>(FeedConverter);
     const doc = await docRef.get();
     const headers: {
       'if-modified-since': string | null;
@@ -149,17 +153,7 @@ export const runFetchFeeds = functions.pubsub
     const db = admin.firestore();
     const res = await db
       .collection(FEEDS_COLLECTION)
-      .withConverter<Feed>({
-        toFirestore: (model) => model,
-        fromFirestore: (data) => {
-          return {
-            url: data['url'],
-            lastModified: data['lastModified'],
-            expires: data['expires'],
-            parser: data['parser'],
-          };
-        },
-      })
+      .withConverter<Feed>(FeedConverter)
       .where('expires', '<=', new Date())
       .get();
 
@@ -172,9 +166,6 @@ export const runFetchFeeds = functions.pubsub
     const tasks: Promise<string>[] = [];
 
     for (const feed of res.docs) {
-      logger.debug({
-        data: feed.data(),
-      });
       const { url, parser } = feed.data();
       const payload = { url, parser };
       logger.info({

@@ -16,6 +16,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@firestore-simple/admin": "7.0.0",
+    "@google-cloud/firestore": "^3.8.4",
     "@google-cloud/logging-winston": "^3.0.6",
     "@google-cloud/pubsub": "^2.1.0",
     "@types/jsdom": "16.2.3",
