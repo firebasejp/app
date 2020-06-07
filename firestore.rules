@@ -2,7 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /{path=**}/feedItems_v1/{item} {
-      allow read: if true;
+      allow read: if request.query.limit <= 2;
     }
   }
 }

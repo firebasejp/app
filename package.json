@@ -8,7 +8,6 @@
     "start": "run-p start:*",
     "start:expo": "expo start",
     "start:emulators": "firebase emulators:start --import=./testdata --only ui,firestore,pubsub,functions",
-    "start:functions-tsc": "yarn --prefix functions tsc -w",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "next",

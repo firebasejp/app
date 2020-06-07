@@ -14,7 +14,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Analytics from '../../lib/analytics';
 import * as WebBrowser from 'expo-web-browser';
 import { EventViewItem } from './events';
-import { BlogViewItem } from './blog';
+import { FeedItem } from './types';
 
 function Header({ title }: { title: string }): JSX.Element {
   const [visibleMenu, setVisibleMenu] = React.useState(false);
@@ -150,7 +150,7 @@ export const BlogCard = ({
   item,
   index,
 }: {
-  item: BlogViewItem;
+  item: FeedItem;
   index: number;
 }): JSX.Element => (
   <Card

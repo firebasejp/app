@@ -3,9 +3,9 @@ import * as admin from 'firebase-admin';
 import axios from 'axios';
 import crypto from 'crypto';
 import { PubSub } from '@google-cloud/pubsub';
-import { parseContent, ParserType } from './parsers';
+import { parseContent } from './parsers';
 import { logger } from '../../logger';
-import { FirestoreDataConverter, DocumentData } from '@google-cloud/firestore';
+import { Feed, FeedConverter, isFeed } from './types';
 
 export const FEEDS_COLLECTION = 'feeds_v1';
 export const FEED_ITENS_DOC = 'feedItems_v1';
@@ -17,40 +17,6 @@ function hash(data: string): string {
 
   return shasum.digest('hex');
 }
-
-export type Feed = {
-  url: string;
-  parser?: ParserType;
-  lastModified?: string;
-  expires?: Date | null;
-};
-
-export const FeedConverter: FirestoreDataConverter<Feed> = {
-  toFirestore: (model: Feed) => model,
-  fromFirestore: (data: DocumentData) => {
-    return {
-      url: data['url'],
-      lastModified: data['lastModified'],
-      expires: data['expires'],
-      parser: data['parser'],
-    };
-  },
-};
-
-export const isFeed = (data: Record<string, unknown>): data is Feed => {
-  return typeof data['url'] === 'string';
-};
-
-export type ContentType = 'blog';
-
-export type FeedItem = {
-  contentType: ContentType;
-  link: string;
-  title: string;
-  thumbnail: string;
-  published: Date;
-  content: string;
-};
 
 /**
  *
@@ -128,7 +94,7 @@ export const fetchFeed = functions.pubsub
       batch.set(feedItemsRef.doc(id), item);
     }
 
-    const lastModified = res.headers['last-modified'];
+    const lastModified = res.headers['last-modified'] ?? null;
     const expires = res.headers['expires'];
     batch.set(docRef, {
       url,

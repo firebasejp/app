@@ -1,8 +1,9 @@
 import xml2js from 'xml2js';
+import axios from 'axios';
 import { JSDOM } from 'jsdom';
-import { FeedItem } from './fetch';
+import { FeedItem } from './types';
 
-export type ParserType = 'feedburner';
+export type ParserType = 'feedburner' | 'medium';
 
 const parseFeedburner = async (content: string): Promise<FeedItem[]> => {
   const parser = new xml2js.Parser();
@@ -44,10 +45,38 @@ const parseFeedburner = async (content: string): Promise<FeedItem[]> => {
   return res;
 };
 
-export async function parseContent(
-  parser: 'feedburner',
-  content: string,
-): Promise<FeedItem[]>;
+const parseMedium = async (content: string): Promise<FeedItem[]> => {
+  const parser = new xml2js.Parser();
+  const parsed = await parser.parseStringPromise(content);
+
+  const res: FeedItem[] = [];
+  const { item: items } = parsed.rss.channel[0];
+  for (const item of items) {
+    const link = item.link[0];
+    const response = await axios.get(link);
+    const dom = new JSDOM(response.data);
+    const element = dom.window.document.querySelector(
+      "head > meta[property='og:image']",
+    ) as HTMLMetaElement;
+    const thumbnail = element.content;
+
+    res.push({
+      contentType: 'blog',
+      link,
+      title: item.title[0],
+      thumbnail,
+      published: new Date(item.pubDate[0]),
+      content: item['content:encoded']
+        ? item['content:encoded'][0]
+        : item['description'][0],
+    });
+  }
+
+  // console.log({ res });
+
+  return res;
+};
+
 export async function parseContent(
   parser: ParserType,
   content: string,
@@ -55,6 +84,8 @@ export async function parseContent(
   switch (parser) {
     case 'feedburner':
       return parseFeedburner(content);
+    case 'medium':
+      return parseMedium(content);
     default:
       throw new Error(`unsupport parase ${parser}`);
   }
