@@ -59,7 +59,7 @@ export function useFeedItems(
 
   React.useEffect(() => {
     fetchFeedItems().finally(() => setIsFetching(false));
-  }, [type, setIsFetching]);
+  }, [type]);
 
   function refresh() {
     setIsFetching(true);
