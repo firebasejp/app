@@ -57,6 +57,8 @@ export function useFeedItems(
       .then(setData);
   }
 
+  // TODO(k2wanko): Error handling
+
   React.useEffect(() => {
     fetchFeedItems().finally(() => setIsFetching(false));
   }, [type]);
