@@ -11,12 +11,14 @@ export const FEEDS_COLLECTION = 'feeds_v1';
 export const FEED_ITENS_DOC = 'feedItems_v1';
 export const FETCH_FEED_TOPIC = 'fetch-feed';
 
-function hash(data: string): string {
-  const shasum = crypto.createHash('sha1');
-  shasum.update(data);
-
-  return shasum.digest('hex');
-}
+export const feedId = (url: string): string =>
+  crypto
+    .createHash('sha1')
+    .update(url)
+    .digest('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/g, '');
 
 /**
  *
@@ -40,9 +42,8 @@ export const fetchFeed = functions.pubsub
     }
 
     const db = admin.firestore();
-    const urlHash = hash(url);
     const docRef = db
-      .doc(`/${FEEDS_COLLECTION}/${urlHash}`)
+      .doc(`/${FEEDS_COLLECTION}/${feedId(url)}`)
       .withConverter<Feed>(FeedConverter);
     const doc = await docRef.get();
     const headers: {
@@ -90,8 +91,8 @@ export const fetchFeed = functions.pubsub
       if (!link) {
         continue;
       }
-      const id = hash(link);
-      batch.set(feedItemsRef.doc(id), item);
+      const id = feedId(link);
+      batch.create(feedItemsRef.doc(id), item);
     }
 
     const lastModified = res.headers['last-modified'] ?? null;
