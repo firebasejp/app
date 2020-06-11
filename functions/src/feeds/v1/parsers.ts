@@ -28,8 +28,15 @@ const parseFeedburner = async (content: string): Promise<FeedItem[]> => {
       const elements = dom.window.document.querySelectorAll(`img`);
       thumbnail =
         Array.from(elements)
-          .find((e) => e.dataset.originalWidth !== e.dataset.originalHeight)
+          .find(
+            (e) =>
+              (e.dataset.originalWidth ?? 0) !==
+              (e.dataset.originalHeight ?? 0),
+          )
           ?.getAttribute('src') ?? '';
+      if (!thumbnail) {
+        thumbnail = Array.from(elements)[0]?.getAttribute('src') ?? '';
+      }
     }
 
     res.push({
