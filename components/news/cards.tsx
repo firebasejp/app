@@ -13,7 +13,6 @@ import {
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Analytics from '../../lib/analytics';
 import * as WebBrowser from 'expo-web-browser';
-import { EventViewItem } from './events';
 import { FeedItem } from './types';
 
 function Header({ title }: { title: string }): JSX.Element {
@@ -112,14 +111,19 @@ export function EventCard({
   item,
   index,
 }: {
-  item: EventViewItem;
+  item: FeedItem;
   index: number;
 }): JSX.Element {
   const theme = useTheme();
 
+  // Processing when link is connpass.
+  const part = item.content.split('<br />');
+  const startEnd = part[0];
+  const place = part[1].substring('開催場所: '.length);
+
   return (
     <Card
-      onPress={() => WebBrowser.openBrowserAsync(item.url)}
+      onPress={() => WebBrowser.openBrowserAsync(item.link)}
       style={{
         marginHorizontal: 10,
         marginBottom: 15,
@@ -127,10 +131,10 @@ export function EventCard({
       }}
     >
       <Header title={item.title} />
-      <Card.Cover source={{ uri: item.thumbnail_url }} />
+      <Card.Cover source={{ uri: item.thumbnail }} />
       <Card.Content>
         <View style={{ marginTop: 10, flexDirection: 'column' }}>
-          <Paragraph>2020/06/26（金） 18:00〜</Paragraph>
+          <Paragraph>{startEnd}</Paragraph>
         </View>
         <View style={{ marginTop: 10, flexDirection: 'row' }}>
           <MaterialCommunityIcons
@@ -138,10 +142,10 @@ export function EventCard({
             size={24}
             color={theme.dark ? 'white' : 'black'}
           />
-          <Paragraph style={{ marginLeft: 15 }}>YouTube</Paragraph>
+          <Paragraph style={{ marginLeft: 15 }}>{place}</Paragraph>
         </View>
       </Card.Content>
-      <Bottom url={item.url} item={{ id: item.id, title: item.title }} />
+      <Bottom url={item.link} item={{ id: item.id, title: item.title }} />
     </Card>
   );
 }
