@@ -8,12 +8,12 @@ import {
   DarkTheme as PaperDarkTheme,
 } from 'react-native-paper';
 import { Updates } from 'expo';
+import './lib/firebase';
 import * as SplashScreen from 'expo-splash-screen';
 import {
   PreferencesContext,
   PreferencesContextType,
 } from './context/preferences';
-
 import { RootNabigator } from './components/navigator';
 
 export default function App(): JSX.Element {

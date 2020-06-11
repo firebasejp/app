@@ -5,13 +5,16 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "expo start",
+    "start": "run-p start:*",
+    "start:expo": "expo start",
+    "start:emulators": "firebase emulators:start --import=./testdata --only ui,firestore,pubsub,functions",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "next",
     "eject-next": "next-expo customize",
     "eject": "expo eject",
     "type-check": "tsc",
+    "emulators:export": "firebase emulators:export ./testdata",
     "lint": "eslint --ext ts,tsx .",
     "lint:fix": "eslint --fix --ext ts,tsx ."
   },
@@ -23,10 +26,13 @@
     "@react-navigation/material-top-tabs": "^5.2.9",
     "@react-navigation/native": "^5.5.0",
     "@react-navigation/stack": "^5.4.1",
+    "base-64": "^0.1.0",
     "expo": "~37.0.3",
+    "expo-constants": "~9.0.0",
     "expo-firebase-analytics": "~2.1.1",
     "expo-splash-screen": "^0.2.3",
     "expo-web-browser": "~8.2.1",
+    "firebase": "^7.14.6",
     "next": "latest",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
@@ -43,6 +49,7 @@
   "devDependencies": {
     "@babel/core": "^7.8.6",
     "@expo/next-adapter": "2.1.9",
+    "@types/base-64": "^0.1.3",
     "@types/node": "14.0.4",
     "@types/react": "16.9.35",
     "@types/react-dom": "16.9.8",
@@ -61,6 +68,7 @@
     "firebase-tools": "^8.4.1",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.7",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.0.5",
     "typescript": "3.9.3"
   }

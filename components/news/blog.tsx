@@ -1,18 +1,18 @@
 import React from 'react';
 import { FlatList, View, ActivityIndicator } from 'react-native';
-import { EventCard } from './cards';
+import { BlogCard } from './cards';
 import { useFeedItems } from './hooks';
 
-export function NewsEvents(): JSX.Element {
+export function NewsBlog(): JSX.Element {
   const { isFetching, isNextFetching, items, refresh, next } = useFeedItems(
-    'event',
+    'blog',
   );
 
   return (
     <FlatList
       data={items}
       keyExtractor={(item) => item.title}
-      renderItem={({ item, index }) => <EventCard item={item} index={index} />}
+      renderItem={({ item, index }) => <BlogCard item={item} index={index} />}
       onRefresh={refresh}
       refreshing={isFetching}
       onScrollEndDrag={next}

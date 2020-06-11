@@ -13,30 +13,16 @@ import {
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Analytics from '../../lib/analytics';
 import * as WebBrowser from 'expo-web-browser';
-import { EventViewItem } from './events';
+import { FeedItem } from './types';
 
-export function EventCard({
-  item,
-  index,
-}: {
-  item: EventViewItem;
-  index: number;
-}): JSX.Element {
-  const theme = useTheme();
+function Header({ title }: { title: string }): JSX.Element {
   const [visibleMenu, setVisibleMenu] = React.useState(false);
   const [visibleReportDialog, setVisibleReportDialog] = React.useState(false);
 
   return (
-    <Card
-      onPress={() => WebBrowser.openBrowserAsync(item.url)}
-      style={{
-        marginHorizontal: 10,
-        marginBottom: 15,
-        marginTop: index === 0 ? 15 : 0,
-      }}
-    >
+    <>
       <Card.Title
-        title={item.title}
+        title={title}
         subtitle=""
         right={() => (
           <Menu
@@ -66,10 +52,89 @@ export function EventCard({
           </Dialog.Actions>
         </Dialog>
       </Portal>
-      <Card.Cover source={{ uri: item.thumbnail_url }} />
+    </>
+  );
+}
+
+const Bottom = ({
+  url,
+  item,
+}: {
+  url: string;
+  item: { id: string; title: string };
+}): JSX.Element => (
+  <>
+    <Card.Actions style={{ justifyContent: 'flex-start' }}>
+      <IconButton
+        icon="bookmark-outline"
+        onPress={() => {
+          const i: Analytics.Item = {
+            item_id: item.id,
+            item_name: item.title,
+            item_category: 'event',
+          };
+
+          // TODO(k2wanko): Implment save stock
+          const stocked = false;
+          if (!stocked) {
+            Analytics.logEvent('add_to_stock', {
+              items: [i],
+            });
+          } else {
+            Analytics.logEvent('remove_from_stock', {
+              items: [i],
+            });
+          }
+        }}
+      />
+      <IconButton
+        icon="share-variant"
+        onPress={() =>
+          Share.share({
+            url,
+          }).then((resulut) => {
+            if (resulut.action === 'sharedAction') {
+              return Analytics.logEvent('share', {
+                content_type: 'event',
+                item_id: item.id,
+                method: resulut.activityType ?? 'unknown',
+              });
+            }
+          })
+        }
+      />
+    </Card.Actions>
+  </>
+);
+
+export function EventCard({
+  item,
+  index,
+}: {
+  item: FeedItem;
+  index: number;
+}): JSX.Element {
+  const theme = useTheme();
+
+  // Processing when link is connpass.
+  const part = item.content.split('<br />');
+  const startEnd = part[0];
+  const place = part[1].substring('開催場所: '.length);
+
+  return (
+    <Card
+      onPress={() => WebBrowser.openBrowserAsync(item.link)}
+      style={{
+        marginHorizontal: 10,
+        marginBottom: 15,
+        marginTop: index === 0 ? 15 : 0,
+      }}
+    >
+      <Header title={item.title} />
+      <Card.Cover source={{ uri: item.thumbnail }} />
       <Card.Content>
         <View style={{ marginTop: 10, flexDirection: 'column' }}>
-          <Paragraph>2020/06/26（金） 18:00〜</Paragraph>
+          <Paragraph>{startEnd}</Paragraph>
         </View>
         <View style={{ marginTop: 10, flexDirection: 'row' }}>
           <MaterialCommunityIcons
@@ -77,49 +142,50 @@ export function EventCard({
             size={24}
             color={theme.dark ? 'white' : 'black'}
           />
-          <Paragraph style={{ marginLeft: 15 }}>YouTube</Paragraph>
+          <Paragraph style={{ marginLeft: 15 }}>{place}</Paragraph>
         </View>
       </Card.Content>
-      <Card.Actions style={{ justifyContent: 'flex-start' }}>
-        <IconButton
-          icon="bookmark-outline"
-          onPress={() => {
-            const i: Analytics.Item = {
-              item_id: item.id,
-              item_name: item.title,
-              item_category: 'event',
-            };
-
-            // TODO(k2wanko): Implment save stock
-            const stocked = false;
-            if (!stocked) {
-              Analytics.logEvent('add_to_stock', {
-                items: [i],
-              });
-            } else {
-              Analytics.logEvent('remove_from_stock', {
-                items: [i],
-              });
-            }
-          }}
-        />
-        <IconButton
-          icon="share-variant"
-          onPress={() =>
-            Share.share({
-              url: item.url,
-            }).then((resulut) => {
-              if (resulut.action === 'sharedAction') {
-                return Analytics.logEvent('share', {
-                  content_type: 'event',
-                  item_id: item.id,
-                  method: resulut.activityType ?? 'unknown',
-                });
-              }
-            })
-          }
-        />
-      </Card.Actions>
+      <Bottom url={item.link} item={{ id: item.id, title: item.title }} />
     </Card>
   );
 }
+
+export const BlogCard = ({
+  item,
+  index,
+}: {
+  item: FeedItem;
+  index: number;
+}): JSX.Element => (
+  <Card
+    style={{
+      marginHorizontal: 10,
+      marginBottom: 15,
+      marginTop: index === 0 ? 15 : 0,
+    }}
+    onPress={() => WebBrowser.openBrowserAsync(item.link)}
+  >
+    <Header title="" />
+    <Card.Cover
+      source={{
+        uri: item.thumbnail ? item.thumbnail : 'https://picsum.photos/700',
+      }}
+    />
+
+    <Card.Content>
+      <View style={{ marginTop: 10, flexDirection: 'column' }}>
+        <Paragraph style={{ fontWeight: 'bold' }}>{item.title}</Paragraph>
+      </View>
+      {/* <View style={{ marginTop: 10, flexDirection: 'row' }}>
+          <MaterialCommunityIcons
+            name="note"
+            size={24}
+            color={theme.dark ? 'white' : 'black'}
+          />
+          <Paragraph style={{ marginLeft: 15 }}>YouTube</Paragraph>
+        </View> */}
+    </Card.Content>
+
+    <Bottom url={item.link} item={{ id: item.id, title: item.title }} />
+  </Card>
+);

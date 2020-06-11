@@ -3,6 +3,7 @@ import { View, StatusBar } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { Appbar, Title, useTheme } from 'react-native-paper';
 import { NewsEvents } from './events';
+import { NewsBlog } from './blog';
 
 const Dummy = ({ text }: { text: string }) => () => (
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -61,7 +62,7 @@ export function NewsNavigator(): JSX.Element {
         />
         <Tab.Screen
           name="/news/blog"
-          component={Dummy({ text: 'Blog' })}
+          component={NewsBlog}
           options={{
             tabBarLabel: 'Blog',
           }}
