@@ -47,6 +47,10 @@ export function useFeedItems(
       .then((docs) => {
         const items = (current ?? []).concat(docs);
 
+        if (items.length === 0) {
+          return [];
+        }
+
         setLastVisible(items[items.length - 1].published);
 
         return items.filter(
