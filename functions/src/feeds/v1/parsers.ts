@@ -3,7 +3,7 @@ import axios from 'axios';
 import { JSDOM } from 'jsdom';
 import { FeedItem } from './types';
 
-export type ParserType = 'feedburner' | 'medium' | 'youtube';
+export type ParserType = 'feedburner' | 'medium' | 'youtube' | 'connpass';
 
 const parseFeedburner = async (content: string): Promise<FeedItem[]> => {
   const parser = new xml2js.Parser();
@@ -77,7 +77,7 @@ const parseMedium = async (content: string): Promise<FeedItem[]> => {
   return res;
 };
 
-const parseYouTube = async (content: string): Promise<FeedItem[]> => {
+export const parseYouTube = async (content: string): Promise<FeedItem[]> => {
   const parser = new xml2js.Parser();
   const parsed = await parser.parseStringPromise(content);
 
@@ -103,6 +103,37 @@ const parseYouTube = async (content: string): Promise<FeedItem[]> => {
   return res;
 };
 
+export const parseConnpass = async (content: string): Promise<FeedItem[]> => {
+  const parser = new xml2js.Parser();
+  const parsed = await parser.parseStringPromise(content);
+
+  const { feed } = parsed;
+  const res: FeedItem[] = [];
+
+  for (const item of feed.entry) {
+    const link = item.link.find(
+      (l: { $: { rel: string } }) => l.$.rel === 'alternate',
+    ).$.href;
+    const response = await axios.get(link);
+    const dom = new JSDOM(response.data);
+    const element = dom.window.document.querySelector(
+      "head > meta[property='og:image']",
+    ) as HTMLMetaElement;
+    const thumbnail = element.content;
+
+    res.push({
+      contentType: 'event',
+      link,
+      title: item['title'][0] ?? '',
+      thumbnail,
+      published: new Date(item.published[0]),
+      content: item['summary'][0]._ ?? '',
+    });
+  }
+
+  return res;
+};
+
 export async function parseContent(
   parser: ParserType,
   content: string,
@@ -114,6 +145,8 @@ export async function parseContent(
       return parseMedium(content);
     case 'youtube':
       return parseYouTube(content);
+    case 'connpass':
+      return parseConnpass(content);
     default:
       throw new Error(`unsupport parase ${parser}`);
   }
