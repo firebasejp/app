@@ -23,7 +23,7 @@ export const isFeed = (data: Record<string, unknown>): data is Feed => {
   return typeof data['url'] === 'string';
 };
 
-export type ContentType = 'blog';
+export type ContentType = 'blog' | 'video';
 
 export type FeedItem = {
   contentType: ContentType;

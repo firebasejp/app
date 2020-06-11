@@ -3,7 +3,7 @@ import axios from 'axios';
 import { JSDOM } from 'jsdom';
 import { FeedItem } from './types';
 
-export type ParserType = 'feedburner' | 'medium';
+export type ParserType = 'feedburner' | 'medium' | 'youtube';
 
 const parseFeedburner = async (content: string): Promise<FeedItem[]> => {
   const parser = new xml2js.Parser();
@@ -77,6 +77,32 @@ const parseMedium = async (content: string): Promise<FeedItem[]> => {
   return res;
 };
 
+const parseYouTube = async (content: string): Promise<FeedItem[]> => {
+  const parser = new xml2js.Parser();
+  const parsed = await parser.parseStringPromise(content);
+
+  const { feed } = parsed;
+  const res: FeedItem[] = [];
+
+  for (const item of feed.entry) {
+    const link = item.link.find(
+      (l: { $: { rel: string } }) => l.$.rel === 'alternate',
+    ).$.href;
+    const mediaGroup = item['media:group'][0];
+
+    res.push({
+      contentType: 'video',
+      link,
+      title: mediaGroup['media:title'][0] ?? '',
+      thumbnail: mediaGroup['media:thumbnail'][0].$.url ?? '',
+      published: new Date(item.published[0]),
+      content: mediaGroup['media:description'][0] ?? '',
+    });
+  }
+
+  return res;
+};
+
 export async function parseContent(
   parser: ParserType,
   content: string,
@@ -86,6 +112,8 @@ export async function parseContent(
       return parseFeedburner(content);
     case 'medium':
       return parseMedium(content);
+    case 'youtube':
+      return parseYouTube(content);
     default:
       throw new Error(`unsupport parase ${parser}`);
   }
