@@ -6,6 +6,74 @@ import {
 } from '../../functions/src/feeds/v1/types';
 import { FeedItem } from './types';
 
+type FetchFeedItemsState = {
+  isFetching: boolean;
+  isNextFetching: boolean;
+  data: FeedItem[];
+  lastVisible?: Date;
+  error?: Error;
+  refreshCount: number;
+  nextCount: number;
+};
+
+type FetchFeedItemsAction =
+  | FetchFeedItemDataAction
+  | FetchFeedItemErrorAction
+  | FetchFeedItemRefreshAction
+  | FetchFeedItemNextAction;
+
+type FetchFeedItemDataAction = {
+  type: 'data';
+  data: FeedItem[];
+  lastVisible: Date;
+};
+type FetchFeedItemErrorAction = {
+  type: 'error';
+  error: Error;
+};
+type FetchFeedItemRefreshAction = {
+  type: 'refresh';
+};
+type FetchFeedItemNextAction = {
+  type: 'next';
+};
+
+const fetchFeedItemsReducer: React.Reducer<
+  FetchFeedItemsState,
+  FetchFeedItemsAction
+> = (state, action) => {
+  switch (action.type) {
+    case 'data':
+      return {
+        ...state,
+        data: action.data,
+        lastVisible: action.lastVisible,
+        isFetching: false,
+      };
+    case 'error':
+      return {
+        ...state,
+        error: action.error,
+        isFetching: false,
+      };
+    case 'refresh':
+      return {
+        ...state,
+        refreshCount: state.refreshCount + 1,
+        lastVisible: undefined,
+        isFetching: true,
+      };
+    case 'next':
+      return {
+        ...state,
+        nextCount: state.nextCount + 1,
+        isNextFetching: true,
+      };
+    default:
+      throw new Error(`unsupport action ${action}`);
+  }
+};
+
 export function useFeedItems(
   type: ContentType,
 ): {
@@ -15,12 +83,26 @@ export function useFeedItems(
   refresh: () => void;
   next: () => void;
 } {
-  const [isFetching, setIsFetching] = React.useState(true);
-  const [isNextFetching, setIsNextFetching] = React.useState(false);
-  const [data, setData] = React.useState<FeedItem[]>();
-  const [lastVisible, setLastVisible] = React.useState<Date>();
+  const [state, dispatch] = React.useReducer(fetchFeedItemsReducer, {
+    isFetching: true,
+    isNextFetching: false,
+    data: [],
+    refreshCount: 0,
+    nextCount: 0,
+  });
 
-  function fetchFeedItems(current?: FeedItem[], lastVisible?: Date) {
+  const {
+    isFetching,
+    isNextFetching,
+    data,
+    lastVisible,
+    refreshCount,
+    nextCount,
+  } = state;
+
+  React.useEffect(() => {
+    let safeDispatch = (action: FetchFeedItemsAction) => dispatch(action);
+    const current: FeedItem[] = data;
     let query = db
       .collectionGroup('feedItems_v1')
       .where('contentType', '==', type)
@@ -32,7 +114,7 @@ export function useFeedItems(
 
     query = query.limit(2);
 
-    return query
+    query
       .get()
       .then((snap) => {
         return snap.docs.map((doc) => {
@@ -51,37 +133,35 @@ export function useFeedItems(
           return [];
         }
 
-        setLastVisible(items[items.length - 1].published);
+        const lastVisible = items[items.length - 1].published;
 
-        return items.filter(
+        const data = items.filter(
           (item, i) =>
             items.findIndex((item2) => item.link === item2.link) === i,
         );
+
+        safeDispatch({
+          type: 'data',
+          data,
+          lastVisible,
+        });
       })
-      .then(setData);
-  }
+      .catch((error) => {
+        safeDispatch({ type: 'error', error });
+      });
 
-  // TODO(k2wanko): Error handling
-
-  React.useEffect(() => {
-    fetchFeedItems().finally(() => setIsFetching(false));
-  }, [type]);
-
-  function refresh() {
-    setIsFetching(true);
-    fetchFeedItems().finally(() => setIsFetching(false));
-  }
-
-  function next() {
-    setIsNextFetching(true);
-    fetchFeedItems(data, lastVisible).finally(() => setIsNextFetching(false));
-  }
+    return function cleanup() {
+      safeDispatch = () => {
+        return;
+      };
+    };
+  }, [refreshCount, nextCount]);
 
   return {
     isFetching,
     isNextFetching,
     items: data ?? [],
-    refresh,
-    next,
+    refresh: (): void => dispatch({ type: 'refresh' }),
+    next: (): void => dispatch({ type: 'next' }),
   };
 }
