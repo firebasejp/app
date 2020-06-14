@@ -8,7 +8,7 @@ import {
   DarkTheme as PaperDarkTheme,
 } from 'react-native-paper';
 import { Updates } from 'expo';
-import './lib/firebase';
+import { auth, UserContext } from './lib/firebase';
 import * as SplashScreen from 'expo-splash-screen';
 import {
   PreferencesContext,
@@ -17,7 +17,7 @@ import {
 import { RootNabigator } from './components/navigator';
 
 export default function App(): JSX.Element {
-  // const [isAppReady, setIsAppReady] = React.useState(false);
+  const [user, setUser] = React.useState(auth.currentUser);
   const colorScheme = useColorScheme();
   const [theme, setTheme] = React.useState<'light' | 'dark'>(
     colorScheme === 'dark' ? 'dark' : 'light',
@@ -45,9 +45,16 @@ export default function App(): JSX.Element {
 
   React.useEffect(() => {
     // TODO(k2wanko): Implement loading
-    SplashScreen.preventAutoHideAsync().then(() => {
+    SplashScreen.preventAutoHideAsync();
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       SplashScreen.hideAsync();
+      setUser(user);
     });
+
+    return () => {
+      unsubscribe();
+    };
   });
 
   return (
@@ -68,7 +75,9 @@ export default function App(): JSX.Element {
                     }
               }
             >
-              <RootNabigator />
+              <UserContext.Provider value={user}>
+                <RootNabigator />
+              </UserContext.Provider>
             </PaperProvider>
           </PreferencesContext.Provider>
         </AppearanceProvider>

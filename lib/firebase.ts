@@ -1,5 +1,7 @@
+import React from 'react';
 import Constants from 'expo-constants';
 import firebase from 'firebase/app';
+import 'firebase/auth';
 import 'firebase/firestore';
 import { decode, encode } from 'base-64';
 
@@ -28,6 +30,8 @@ const app: firebase.app.App = firebase.apps.length
       measurementId: 'G-QGWN9Y50ET',
     });
 
+const auth = firebase.auth();
+
 const db = app.firestore();
 if (__DEV__) {
   db.settings({
@@ -36,4 +40,6 @@ if (__DEV__) {
   });
 }
 
-export { app, db };
+export { app, auth, db };
+
+export const UserContext = React.createContext<firebase.User | null>(null);
